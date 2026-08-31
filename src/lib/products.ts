@@ -1,17 +1,17 @@
-import p1 from "@/assets/p1.jpg";
-import p2 from "@/assets/p2.jpg";
-import p3 from "@/assets/p3.jpg";
-import p4 from "@/assets/p4.jpg";
-import p5 from "@/assets/p5.jpg";
-import p6 from "@/assets/p6.jpg";
-import p7 from "@/assets/p7.jpg";
-import p8 from "@/assets/p8.jpg";
-import catGold from "@/assets/cat-gold.jpg";
-import catDiamond from "@/assets/cat-diamond.jpg";
-import catSilver from "@/assets/cat-silver.jpg";
-import catBridal from "@/assets/cat-bridal.jpg";
-import catTraditional from "@/assets/cat-traditional.jpg";
-import catArtificial from "@/assets/cat-artificial.jpg";
+const p1 = "/images/p1.jpg";
+const p2 = "/images/p2.jpg";
+const p3 = "/images/p3.jpg";
+const p4 = "/images/p4.jpg";
+const p5 = "/images/p5.jpg";
+const p6 = "/images/p6.jpg";
+const p7 = "/images/p7.jpg";
+const p8 = "/images/p8.jpg";
+const catGold = "/images/cat-gold.jpg";
+const catDiamond = "/images/cat-diamond.jpg";
+const catSilver = "/images/cat-silver.jpg";
+const catBridal = "/images/cat-bridal.jpg";
+const catTraditional = "/images/cat-traditional.jpg";
+const catArtificial = "/images/cat-artificial.jpg";
 
 export type Product = {
   id: string;
