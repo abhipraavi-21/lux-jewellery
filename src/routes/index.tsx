@@ -4,9 +4,10 @@ import heroBridal from "@/assets/hero-bridal.jpg";
 import diamondEditorial from "@/assets/diamond-editorial.jpg";
 import bridalBand from "@/assets/bridal-band.jpg";
 import bespoke from "@/assets/bespoke.jpg";
-import { PRODUCTS, CATEGORIES, WHATSAPP_LINK } from "@/lib/products";
+import { WHATSAPP_LINK } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
 import { SectionHeader } from "@/components/SectionHeader";
+import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -33,11 +34,24 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-const featured = PRODUCTS.slice(0, 4);
-const bestSellers = PRODUCTS.slice(2, 6);
-const newArrivals = PRODUCTS.slice(4, 8);
-
 function HomePage() {
+  const { activeProducts, activeCategories, homepage } = useStore();
+  const featured = homepage.featuredProductIds
+    .map((id) => activeProducts.find((product) => product.id === id))
+    .filter(Boolean) as typeof activeProducts;
+  const bestSellers = homepage.bestsellerIds
+    .map((id) => activeProducts.find((product) => product.id === id))
+    .filter(Boolean) as typeof activeProducts;
+  const newArrivals = homepage.newArrivalIds
+    .map((id) => activeProducts.find((product) => product.id === id))
+    .filter(Boolean) as typeof activeProducts;
+  const categoryShowcase = activeCategories.map((category) => ({
+    slug: category.id,
+    name: category.name,
+    image: category.image,
+    count: activeProducts.filter((product) => product.category === category.name).length,
+  }));
+
   return (
     <>
       {/* HERO */}
@@ -91,14 +105,14 @@ function HomePage() {
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <SectionHeader eyebrow="The Atelier" title="Signature Categories" intro="Six distinct languages of luxury — each curated by our master designers." />
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          {CATEGORIES.map((cat) => (
+          {categoryShowcase.map((cat) => (
             <Link
               key={cat.slug}
               to="/shop"
               className="group relative aspect-[4/5] md:aspect-square overflow-hidden ring-1 ring-gold/10"
             >
               <img src={cat.image} alt={cat.name} loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1500ms] ease-[cubic-bezier(0.16,1,0.3,1)]" />
-              <div className={`absolute inset-0 transition-opacity ${cat.tone === "charcoal" ? "bg-gradient-to-t from-charcoal/85 via-charcoal/20 to-transparent" : cat.tone === "maroon" ? "bg-gradient-to-t from-maroon/85 via-maroon/20 to-transparent" : "bg-gradient-to-t from-charcoal/70 via-transparent to-transparent"}`} />
+              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/20 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-5 md:p-7">
                 <h3 className="font-display text-xl md:text-2xl text-ivory leading-tight">{cat.name}</h3>
                 <div className="flex items-center justify-between mt-2">
@@ -277,7 +291,7 @@ function HomePage() {
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <SectionHeader eyebrow="@aureliaheritage" title="From Our Atelier" intro="Follow the craft, the muses, the moments that become heirlooms." />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[...PRODUCTS, ...PRODUCTS].slice(0, 8).map((p, i) => (
+          {[...activeProducts, ...activeProducts].slice(0, 8).map((p, i) => (
             <a key={`${p.id}-${i}`} href="#" className="group relative aspect-square overflow-hidden ring-1 ring-gold/10">
               <img src={p.image} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
               <div className="absolute inset-0 bg-maroon/0 group-hover:bg-maroon/60 transition-colors grid place-items-center">

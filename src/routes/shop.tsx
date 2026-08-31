@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { PRODUCTS, NAV } from "@/lib/products";
+import { NAV } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
 import { SectionHeader } from "@/components/SectionHeader";
 import { ChevronDown, Search } from "lucide-react";
+import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -20,16 +21,19 @@ export const Route = createFileRoute("/shop")({
 });
 
 function ShopPage() {
+  const { activeProducts, activeCategories } = useStore();
   const [query, setQuery] = useState("");
   const [material, setMaterial] = useState("All");
   const [occasion, setOccasion] = useState("All");
   const [sort, setSort] = useState("featured");
 
-  const materials = ["All", ...Array.from(new Set(PRODUCTS.map((p) => p.material)))];
-  const occasions = ["All", ...Array.from(new Set(PRODUCTS.map((p) => p.occasion)))];
+  const products = activeProducts;
+  const materials = ["All", ...Array.from(new Set(products.map((p) => p.material)))];
+  const occasions = ["All", ...Array.from(new Set(products.map((p) => p.occasion)))];
+  const categoryNames = activeCategories.length > 0 ? activeCategories.map((category) => category.name) : NAV.categories;
 
   const filtered = useMemo(() => {
-    let r = PRODUCTS.filter((p) =>
+    let r = products.filter((p) =>
       (material === "All" || p.material === material) &&
       (occasion === "All" || p.occasion === occasion) &&
       (query === "" || p.name.toLowerCase().includes(query.toLowerCase()) || p.category.toLowerCase().includes(query.toLowerCase()))
@@ -38,7 +42,7 @@ function ShopPage() {
     else if (sort === "price-desc") r = [...r].sort((a, b) => b.price - a.price);
     else if (sort === "rating") r = [...r].sort((a, b) => b.rating - a.rating);
     return r;
-  }, [query, material, occasion, sort]);
+  }, [products, query, material, occasion, sort]);
 
   return (
     <>
@@ -68,7 +72,7 @@ function ShopPage() {
           <div>
             <h3 className="font-display text-lg text-maroon mb-3">Categories</h3>
             <ul className="space-y-2 text-sm">
-              {NAV.categories.slice(0, 8).map((c) => (
+              {categoryNames.slice(0, 8).map((c) => (
                 <li key={c}><Link to="/categories" className="text-charcoal/70 hover:text-maroon">{c}</Link></li>
               ))}
             </ul>

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CATEGORIES, NAV } from "@/lib/products";
+import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/categories")({
   head: () => ({
@@ -14,6 +14,14 @@ export const Route = createFileRoute("/categories")({
 });
 
 function CategoriesPage() {
+  const { activeCategories, products } = useStore();
+  const visibleCategories = activeCategories.map((category) => ({
+    slug: category.id,
+    name: category.name,
+    image: category.image,
+    count: products.filter((product) => product.category === category.name).length,
+  }));
+
   return (
     <section className="max-w-7xl mx-auto px-6 py-20">
       <div className="text-center mb-16">
@@ -23,7 +31,7 @@ function CategoriesPage() {
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
-        {CATEGORIES.map((cat) => (
+        {visibleCategories.map((cat) => (
           <Link key={cat.slug} to="/shop" className="group relative aspect-[4/5] overflow-hidden ring-1 ring-gold/10">
             <img src={cat.image} alt={cat.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
             <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/10 to-transparent" />
@@ -38,7 +46,7 @@ function CategoriesPage() {
       <div className="bg-beige/30 p-10 ring-1 ring-gold/15">
         <h2 className="font-display text-3xl text-maroon mb-8">All Sub-Categories</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {NAV.categories.map((c) => (
+          {(activeCategories.length > 0 ? activeCategories.map((category) => category.name) : []).map((c) => (
             <Link key={c} to="/shop" className="text-sm py-2 text-charcoal/75 hover:text-maroon border-b border-gold/10">{c}</Link>
           ))}
         </div>

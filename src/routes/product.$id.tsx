@@ -1,28 +1,26 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { Heart, ShoppingBag, Truck, Shield, RefreshCw, Star, Check, ChevronRight } from "lucide-react";
-import { PRODUCTS, WHATSAPP_LINK } from "@/lib/products";
-import { useStore, formatPrice } from "@/lib/store";
+import { WHATSAPP_LINK } from "@/lib/products";
+import { formatPrice, useStore } from "@/lib/store";
 import { ProductCard } from "@/components/ProductCard";
+import { getSiteData } from "@/lib/api/site-data.functions";
 
 export const Route = createFileRoute("/product/$id")({
-  head: ({ params }) => {
-    const p = PRODUCTS.find((x) => x.id === params.id);
-    return {
-      meta: [
-        { title: p ? `${p.name} — Aurelia Heritage` : "Product — Aurelia" },
-        { name: "description", content: p?.description ?? "Aurelia jewellery piece." },
-        { property: "og:title", content: p?.name ?? "Aurelia" },
-        { property: "og:description", content: p?.description ?? "" },
-        { property: "og:type", content: "product" },
-        ...(p ? [{ property: "og:image", content: p.image }] : []),
-        { property: "og:url", content: `/product/${params.id}` },
-      ],
-      links: [{ rel: "canonical", href: `/product/${params.id}` }],
-    };
-  },
-  loader: ({ params }) => {
-    const p = PRODUCTS.find((x) => x.id === params.id);
+  head: ({ params }) => ({
+    meta: [
+      { title: "Product — Aurelia Heritage" },
+      { name: "description", content: "Aurelia jewellery piece." },
+      { property: "og:title", content: "Aurelia Heritage" },
+      { property: "og:description", content: "Aurelia jewellery piece." },
+      { property: "og:type", content: "product" },
+      { property: "og:url", content: `/product/${params.id}` },
+    ],
+    links: [{ rel: "canonical", href: `/product/${params.id}` }],
+  }),
+  loader: async ({ params }) => {
+    const siteData = await getSiteData();
+    const p = siteData.products.find((x) => x.id === params.id);
     if (!p) throw notFound();
     return { product: p };
   },
@@ -31,10 +29,10 @@ export const Route = createFileRoute("/product/$id")({
 
 function ProductPage() {
   const { product } = Route.useLoaderData();
-  const { addToCart, toggleWishlist, wishlist } = useStore();
+  const { addToCart, toggleWishlist, wishlist, activeProducts } = useStore();
   const [qty, setQty] = useState(1);
   const wished = wishlist.includes(product.id);
-  const related = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 4);
+  const related = activeProducts.filter((p) => p.id !== product.id).slice(0, 4);
 
   return (
     <>

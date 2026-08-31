@@ -5,12 +5,13 @@ import { NAV } from "@/lib/products";
 import { useStore } from "@/lib/store";
 
 const linkCls =
-  "relative text-[11px] uppercase tracking-[0.22em] font-semibold text-charcoal/80 hover:text-maroon transition-colors";
+  "relative whitespace-nowrap text-[11px] uppercase tracking-[0.18em] font-semibold text-charcoal/80 hover:text-maroon transition-colors";
 
 export function Header() {
-  const { cartCount, wishlistCount } = useStore();
+  const { cartCount, wishlistCount, activeCategories } = useStore();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const categoryLinks = activeCategories.length > 0 ? activeCategories.map((category) => category.name) : NAV.categories;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -30,30 +31,30 @@ export function Header() {
         Complimentary insured shipping worldwide · Lifetime exchange · BIS Hallmarked
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between gap-4">
+      <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4 md:px-8">
         {/* Mobile menu */}
         <button onClick={() => setOpen(true)} className="lg:hidden text-charcoal p-1" aria-label="Menu">
           <Menu className="size-5" />
         </button>
 
         {/* Logo */}
-        <Link to="/" className="flex flex-col items-center leading-none order-first lg:order-none mx-auto lg:mx-0">
-          <span className="font-display text-2xl md:text-3xl font-bold tracking-[0.18em] text-maroon">AURELIA</span>
+        <Link to="/" className="flex shrink-0 flex-col items-center leading-none lg:items-start">
+          <span className="font-display text-2xl font-bold tracking-[0.16em] text-maroon md:text-3xl">AURELIA</span>
           <span className="text-[8px] tracking-[0.5em] text-gold mt-0.5">HERITAGE · 1924</span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-7">
+        <nav className="hidden min-w-0 flex-1 items-center justify-center gap-4 overflow-visible xl:flex 2xl:gap-6">
           <Link to="/" className={linkCls}>Home</Link>
           <Link to="/shop" className={linkCls}>Shop</Link>
 
           <div className="group relative">
-            <button className={`${linkCls} flex items-center gap-1`}>
+            <Link to="/categories" className={`${linkCls} flex items-center gap-1`}>
               Categories <ChevronDown className="size-3" />
-            </button>
-            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+            </Link>
+            <div className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3 opacity-0 invisible transition-all group-hover:visible group-hover:opacity-100">
               <div className="w-[320px] glass-card luxury-shadow p-5 grid grid-cols-2 gap-x-4 gap-y-1">
-                {NAV.categories.map((c) => (
+                {categoryLinks.map((c) => (
                   <Link
                     key={c}
                     to="/categories"
@@ -67,10 +68,10 @@ export function Header() {
           </div>
 
           <div className="group relative">
-            <button className={`${linkCls} flex items-center gap-1`}>
+            <Link to="/collections" className={`${linkCls} flex items-center gap-1`}>
               Collections <ChevronDown className="size-3" />
-            </button>
-            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+            </Link>
+            <div className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3 opacity-0 invisible transition-all group-hover:visible group-hover:opacity-100">
               <div className="w-[260px] glass-card luxury-shadow p-5 flex flex-col gap-1">
                 {NAV.collections.map((c) => (
                   <Link key={c} to="/collections" className="text-xs py-1.5 text-charcoal/75 hover:text-maroon transition-colors">{c}</Link>
@@ -88,10 +89,13 @@ export function Header() {
         </nav>
 
         {/* Right actions */}
-        <div className="flex items-center gap-3 md:gap-5">
-          <button className="hidden md:flex items-center gap-2 bg-beige/50 hover:bg-beige rounded-full px-3 py-1.5 transition-colors" aria-label="Search">
+        <div className="ml-auto flex shrink-0 items-center gap-3 md:gap-5">
+          <button
+            className="hidden items-center gap-2 rounded-full bg-beige/50 px-3 py-1.5 transition-colors hover:bg-beige md:flex xl:h-10 xl:w-10 xl:justify-center xl:px-0 2xl:w-auto 2xl:px-3.5 2xl:justify-start"
+            aria-label="Search"
+          >
             <Search className="size-3.5 text-charcoal/70" />
-            <span className="text-[11px] text-charcoal/60 tracking-wider">Search...</span>
+            <span className="hidden max-w-[96px] truncate text-[11px] tracking-wider text-charcoal/60 2xl:inline 2xl:max-w-none">Search...</span>
           </button>
           <Link to="/login" className="text-charcoal/80 hover:text-maroon transition-colors" aria-label="Account">
             <User className="size-5" />
@@ -130,6 +134,16 @@ export function Header() {
                 </Link>
               ))}
             </nav>
+            <div className="mt-8">
+              <p className="text-[10px] uppercase tracking-[0.3em] text-maroon/60 font-semibold">Categories</p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {categoryLinks.slice(0, 8).map((category) => (
+                  <Link key={category} to="/categories" onClick={() => setOpen(false)} className="rounded-full border border-gold/15 px-3 py-2 text-xs text-charcoal/75 hover:border-maroon hover:text-maroon">
+                    {category}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </aside>
         </div>
       )}

@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroBridal from "@/assets/hero-bridal.jpg";
 import bridalBand from "@/assets/bridal-band.jpg";
-import { PRODUCTS, WHATSAPP_LINK } from "@/lib/products";
+import { WHATSAPP_LINK } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
+import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/bridal")({
   head: () => ({
@@ -19,7 +20,8 @@ export const Route = createFileRoute("/bridal")({
 });
 
 function BridalPage() {
-  const bridalProducts = PRODUCTS.filter((p) => p.occasion === "Bridal" || p.collection === "Wedding Collection");
+  const { activeProducts } = useStore();
+  const bridalProducts = activeProducts.filter((p) => p.occasion === "Bridal" || p.collection === "Wedding Collection");
   return (
     <>
       <section className="relative h-[70vh] min-h-[500px] overflow-hidden bg-charcoal">

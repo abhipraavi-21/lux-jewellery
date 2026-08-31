@@ -4,17 +4,20 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { getSiteData } from "../lib/api/site-data.functions";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { WhatsAppButton } from "../components/WhatsAppButton";
 import { StoreProvider } from "../lib/store";
+import { Toaster } from "../components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -61,6 +64,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: async () => {
+    const siteData = await getSiteData();
+    return { siteData };
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -103,16 +110,20 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { siteData } = Route.useLoaderData();
+  const { pathname } = useLocation();
+  const isAdminRoute = pathname.startsWith("/admin");
 
   return (
     <QueryClientProvider client={queryClient}>
-      <StoreProvider>
-        <Header />
-        <main>
+      <StoreProvider initialSiteData={siteData}>
+        <Toaster richColors closeButton position="top-right" />
+        {!isAdminRoute && <Header />}
+        <main className={isAdminRoute ? "min-h-screen" : ""}>
           <Outlet />
         </main>
-        <Footer />
-        <WhatsAppButton />
+        {!isAdminRoute && <Footer />}
+        {!isAdminRoute && <WhatsAppButton />}
       </StoreProvider>
     </QueryClientProvider>
   );

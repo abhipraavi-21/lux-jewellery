@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { Heart, ShoppingBag, Eye, Star } from "lucide-react";
-import { type Product, WHATSAPP_LINK } from "@/lib/products";
+import { WHATSAPP_LINK } from "@/lib/products";
 import { useStore, formatPrice } from "@/lib/store";
+import type { ProductRecord } from "@/lib/site-data";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product }: { product: ProductRecord }) {
   const { addToCart, toggleWishlist, wishlist } = useStore();
   const wished = wishlist.includes(product.id);
   const discount = Math.round(((product.mrp - product.price) / product.mrp) * 100);
