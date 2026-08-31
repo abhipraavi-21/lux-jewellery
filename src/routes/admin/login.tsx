@@ -13,8 +13,8 @@ export const Route = createFileRoute("/admin/login")({
 function AdminLoginPage() {
   const navigate = useNavigate();
   const { loginAdmin } = useStore();
-  const [email, setEmail] = useState("admin@luxjewellery.com");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState("");
@@ -75,14 +75,25 @@ function AdminLoginPage() {
             <p className="mt-2 text-sm text-charcoal/60">Sign in to manage the site.</p>
           </div>
 
-          <form className="space-y-4" onSubmit={onSubmit}>
-            <Field label="Email" icon={Mail} value={email} onChange={setEmail} type="email" placeholder="admin@luxjewellery.com" />
+          <form className="space-y-4" onSubmit={onSubmit} autoComplete="off">
+            <Field
+              label="Email"
+              icon={Mail}
+              value={email}
+              onChange={setEmail}
+              type="email"
+              name="admin-login-email"
+              autoComplete="off"
+              placeholder="Enter email"
+            />
             <Field
               label="Password"
               icon={LockKeyhole}
               value={password}
               onChange={setPassword}
               type={showPassword ? "text" : "password"}
+              name="admin-login-password"
+              autoComplete="new-password"
               placeholder="Enter password"
               rightAction={
                 <button
@@ -135,6 +146,7 @@ function Field({
           {...rest}
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          spellCheck={false}
           className={`w-full bg-transparent text-sm outline-none placeholder:text-charcoal/35 ${inputClass}`}
         />
         {rightAction}

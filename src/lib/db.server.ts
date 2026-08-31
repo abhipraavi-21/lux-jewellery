@@ -169,7 +169,10 @@ function getDatabaseUrl() {
 
 function getPool() {
   if (!pool) {
-    pool = mysql.createPool(getDatabaseUrl());
+    pool = mysql.createPool({
+      uri: getDatabaseUrl(),
+      dateStrings: true,
+    });
   }
   return pool;
 }
