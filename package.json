@@ -8,7 +8,7 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
-    "start": "tsx backend/server.ts",
+    "start": "node backend/server.js",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
